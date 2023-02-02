@@ -48,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               CustomPaint(
                 size: const Size(268, 500),
-                painter: BasketballStandComponent(),
+                painter: BasketballStandCustomPainter(),
               )
             ],
           ),

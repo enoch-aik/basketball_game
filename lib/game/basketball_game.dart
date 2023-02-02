@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:basketball_game/components/ball.dart';
+import 'package:basketball_game/components/basketball_stand.dart';
 import 'package:basketball_game/components/mural_component.dart';
 import 'package:basketball_game/constants/image_assets.dart';
 import 'package:flame/components.dart';
@@ -18,6 +19,7 @@ class BasketBallGame extends FlameGame with HasDraggables {
     await super.onLoad();
 
     add(MuralComponent());
+    add(BasketBallStandComponent());
     add(BallComponent());
   }
 }
