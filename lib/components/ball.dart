@@ -2,10 +2,16 @@ import 'package:basketball_game/constants/image_assets.dart';
 import 'package:basketball_game/game/basketball_game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame_forge2d/body_component.dart';
+import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/gestures.dart';
+import 'package:forge2d/src/dynamics/body.dart';
 
-class BallComponent extends SpriteComponent
-    with HasGameRef<BasketBallGame>, Draggable {
+class BallComponent extends BodyComponent with Draggable {
+  final Vector2 position;
+
+  BallComponent(this.position);
+
   late double _rightBound;
   late double _leftBound;
   late double _upBound;
@@ -17,68 +23,63 @@ class BallComponent extends SpriteComponent
   Future<void> onLoad() async {
     await super.onLoad();
 
-    sprite = await gameRef.loadSprite(ImageAssets.basketballSprite);
+    add(SpriteComponent()
+      ..sprite = await gameRef.loadSprite(ImageAssets.basketballSprite)
+      ..anchor = Anchor.center
+      ..size = Vector2.all(13));
+    // renderBody = false;
     _rightBound = gameRef.size.x - 70;
     _leftBound = gameRef.size.x + 70;
     _upBound = gameRef.size.y + 70;
     _downBound = gameRef.size.y - 70;
 
-    position = Vector2(gameRef.size.x / 2, gameRef.size.y - 70);
+    /*position = Vector2(gameRef.size.x / 2, gameRef.size.y - 70);
     height = 100;
     width = 100;
-    anchor = Anchor.center;
+    anchor = Anchor.center;*/
   }
 
   @override
-  void update(dt) {
-    super.update(dt);
-    if (_swiped) {
-      // position.moveToTarget(Vector2(_x,100), 15);
-    }
-    //position.moveToTarget(Vector2(100,100), 10);
+  Body createBody() {
+    Shape shape = CircleShape()..radius = 6;
+    BodyDef bodyDef = BodyDef(
+        angularDamping: .8,
+        position: Vector2(gameRef.size.x / 2, gameRef.size.y),
+        type: BodyType.dynamic);
+    FixtureDef fixtureDef = FixtureDef(
+      shape,
+      friction: .4,
+      density: 1,
+      restitution: .4,
+    );
+    return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 
-  /*@override
+  @override
   bool onDragStart(DragStartInfo info) {
-    _x = info.eventPosition.game.x;
-    print(_x);
-    print(gameRef.size.x);
-    print(gameRef.size.y);
     return true;
-  }*/
+  }
+
   @override
   bool onDragUpdate(DragUpdateInfo info) {
-    double initialPosition = position.x;
-    if (parent is BasketBallGame) {
-      if ((position.y > gameRef.size.y - 200) && !_swiped) {
-       position.add(info.delta.game);
-       _x = position.x;
-
-        _swiped = true;
-        /*print(position.x);
-        print(info.delta.viewport);
-        print(info.delta.global);
-        print(info.delta.game);
-        */
-        //_x = info.delta.global.x+position.x;
-        //position.add(info.delta.game);
-
-        //position.moveToTarget(Vector2(info.delta.game.x,100), 30);
-        /*position.add(Vector2(
-            info.delta.game.x, info.delta.game.y));*/
-
-        return true;
-      }
-      return true;
-    }
-    //position.add(info.delta.game);
-
+    body.applyLinearImpulse(Vector2(info.delta.game.x,info.delta.game.y) * 500);
+    // print(info.delta.game.toString());
     return true;
   }
 
-  void swipe(DragEndDetails details) {
-    // Apply a force to the ball in the direction of the swipe
-    x += details.velocity.pixelsPerSecond.dx * 0.1;
-    y += details.velocity.pixelsPerSecond.dy * 0.1;
+  @override
+  void update(double dt) {
+    super.update(dt);
+    // print(body.position.y);
+    if (body.position.y <= 50) {
+      //world.stepDt(-dt);
+      //body.position.moveToTarget(Vector2(0, 0), 30);
+      //body.applyLinearImpulse(Vector2(0, gameRef.size.y - 10));
+    }
+  }
+
+  @override
+  bool onDragEnd(DragEndInfo info) {
+    return true;
   }
 }
