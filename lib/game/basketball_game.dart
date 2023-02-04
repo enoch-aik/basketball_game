@@ -8,7 +8,8 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 
-class BasketBallGame extends FlameGame with HasDraggables {
+class BasketBallGame extends Forge2DGame with HasDraggables {
+  @override
   late World world;
 
   BasketBallGame(){
@@ -21,5 +22,9 @@ class BasketBallGame extends FlameGame with HasDraggables {
     add(MuralComponent());
     add(BasketBallStandComponent());
     add(BallComponent());
+  }
+  @override
+  void update(double dt) {
+   super.update(dt);
   }
 }
