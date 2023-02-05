@@ -1,15 +1,34 @@
 import 'package:basketball_game/game/basketball_game.dart';
 import 'package:flame/components.dart';
+import 'package:flame_forge2d/body_component.dart';
+import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
+import 'package:forge2d/src/dynamics/body.dart';
 
-class BasketBallStandComponent extends CustomPainterComponent
-    with HasGameRef<BasketBallGame> {
+class BasketBallStandComponent extends BodyComponent {
   @override
   Future<void> onLoad() async {
+    await super.onLoad();
+    renderBody = false;
+    add(CustomPainterComponent()
+      ..position = Vector2(45, 120)
+      ..anchor = Anchor.center
+      ..painter = BasketballStandCustomPainter());
+  }
 
-    position = Vector2(45,120);
-    anchor = Anchor.center;
-    painter = BasketballStandCustomPainter();
+  @override
+  Body createBody() {
+    Shape shape = EdgeShape();
+    BodyDef bodyDef = BodyDef(
+        position: Vector2(gameRef.size.x / 2, gameRef.size.y),
+        type: BodyType.static);
+    FixtureDef fixtureDef = FixtureDef(
+      shape,
+      friction: .4,
+      density: 1,
+      restitution: .3,
+    );
+    return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 }
 

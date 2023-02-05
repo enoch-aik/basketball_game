@@ -7,7 +7,7 @@ class MuralComponent extends SpriteComponent with HasGameRef<BasketBallGame> {
   Future<void> onLoad() async {
     await super.onLoad();
 
-    sprite = await gameRef.loadSprite(ImageAssets.mural1);
+    sprite = await gameRef.loadSprite(ImageAssets.mural5);
     size = gameRef.size;
   }
 }

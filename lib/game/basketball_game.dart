@@ -22,8 +22,9 @@ class BasketBallGame extends Forge2DGame with HasDraggables {
     Vector2 gameSize = screenToWorld(camera.viewport.effectiveSize);
     addAll([
       MuralComponent(),
-     // BasketBallStandComponent(),
-      BallComponent(gameSize)
+
+      BallComponent(gameSize),
+      //BasketBallStandComponent(),
     ]);
   }
 

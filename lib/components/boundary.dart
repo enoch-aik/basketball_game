@@ -1,4 +1,3 @@
-
 import 'package:flame_forge2d/flame_forge2d.dart';
 
 List<Wall> createBoundaries(Forge2DGame game) {
@@ -24,7 +23,7 @@ class Wall extends BodyComponent {
   @override
   Body createBody() {
     final shape = EdgeShape()..set(start, end);
-    final fixtureDef = FixtureDef(shape, friction: 1);
+    final fixtureDef = FixtureDef(shape, friction: 0.3, restitution: .3);
     final bodyDef = BodyDef(
       userData: this, // To be able to determine object in collision
       position: Vector2.zero(),
@@ -36,29 +35,29 @@ class Wall extends BodyComponent {
 
 class BottomBoundary extends BodyComponent {
   @override
-  Future<void> onLoad ()async {
+  Future<void> onLoad() async {
     await super.onLoad();
     renderBody = false;
-
   }
+
   @override
   Body createBody() {
     Shape shape = EdgeShape()
       ..set(
           Vector2(0, gameRef.size.y), Vector2(gameRef.size.x, gameRef.size.y));
     BodyDef bodyDef = BodyDef(position: Vector2.zero(), type: BodyType.static);
-    FixtureDef fixtureDef = FixtureDef(shape, friction: 0.3, density: 1);
+    FixtureDef fixtureDef = FixtureDef(shape, /*friction: 0.3, density: 1*/);
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 }
 
 class TopBoundary extends BodyComponent {
   @override
-  Future<void> onLoad ()async {
+  Future<void> onLoad() async {
     await super.onLoad();
     renderBody = false;
-
   }
+
   @override
   Body createBody() {
     Shape shape = EdgeShape()..set(Vector2(0, 0), Vector2(gameRef.size.x, 0));
@@ -70,11 +69,11 @@ class TopBoundary extends BodyComponent {
 
 class LeftBoundary extends BodyComponent {
   @override
-  Future<void> onLoad ()async {
+  Future<void> onLoad() async {
     await super.onLoad();
     renderBody = false;
-
   }
+
   @override
   Body createBody() {
     Shape shape = EdgeShape()..set(Vector2(0, 0), Vector2(0, gameRef.size.y));
@@ -86,11 +85,11 @@ class LeftBoundary extends BodyComponent {
 
 class RightBoundary extends BodyComponent {
   @override
-  Future<void> onLoad ()async {
+  Future<void> onLoad() async {
     await super.onLoad();
     renderBody = false;
-
   }
+
   @override
   Body createBody() {
     Shape shape = EdgeShape()

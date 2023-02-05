@@ -12,12 +12,8 @@ class BallComponent extends BodyComponent with Draggable {
 
   BallComponent(this.position);
 
-  late double _rightBound;
-  late double _leftBound;
-  late double _upBound;
-  late double _downBound;
-  late bool _swiped = false;
-  late double _x = 20;
+  bool _enableSwipe = true;
+  late Vector2 _drag;
 
   @override
   Future<void> onLoad() async {
@@ -26,12 +22,8 @@ class BallComponent extends BodyComponent with Draggable {
     add(SpriteComponent()
       ..sprite = await gameRef.loadSprite(ImageAssets.basketballSprite)
       ..anchor = Anchor.center
-      ..size = Vector2.all(13));
-    // renderBody = false;
-    _rightBound = gameRef.size.x - 70;
-    _leftBound = gameRef.size.x + 70;
-    _upBound = gameRef.size.y + 70;
-    _downBound = gameRef.size.y - 70;
+      ..size = Vector2.all(11));
+    renderBody = true;
 
     /*position = Vector2(gameRef.size.x / 2, gameRef.size.y - 70);
     height = 100;
@@ -41,28 +33,39 @@ class BallComponent extends BodyComponent with Draggable {
 
   @override
   Body createBody() {
-    Shape shape = CircleShape()..radius = 6;
+    Shape shape = CircleShape()..radius = 5;
     BodyDef bodyDef = BodyDef(
+        linearDamping: 0.5,
+        userData: this,
         angularDamping: .8,
         position: Vector2(gameRef.size.x / 2, gameRef.size.y),
         type: BodyType.dynamic);
     FixtureDef fixtureDef = FixtureDef(
       shape,
-      friction: .4,
-      density: 1,
-      restitution: .4,
+      friction: 0.4,
+      density: 1.0,
+      restitution: 0.4,
     );
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 
+/*
   @override
   bool onDragStart(DragStartInfo info) {
+    body.applyLinearImpulse(info.eventPosition.game*1000);
     return true;
   }
+*/
 
   @override
   bool onDragUpdate(DragUpdateInfo info) {
-    body.applyLinearImpulse(Vector2(info.delta.game.x,info.delta.game.y) * 500);
+    if (_enableSwipe) {
+      body.applyLinearImpulse(
+        Vector2(info.delta.game.x, -4) * 2000,
+      );
+      _drag = info.delta.game;
+    }
+
     // print(info.delta.game.toString());
     return true;
   }
@@ -70,11 +73,17 @@ class BallComponent extends BodyComponent with Draggable {
   @override
   void update(double dt) {
     super.update(dt);
-    // print(body.position.y);
-    if (body.position.y <= 50) {
-      //world.stepDt(-dt);
-      //body.position.moveToTarget(Vector2(0, 0), 30);
-      //body.applyLinearImpulse(Vector2(0, gameRef.size.y - 10));
+    //print(body.position.y);
+    if (body.position.y <= 55) {
+      _enableSwipe = false;
+      //print('reached limit');
+      if (body.position.y <= 20) {
+        body.applyForce(
+            Vector2(0, 3000 * body.position.distanceTo(Vector2(0, 0))),
+            point: body.position);
+      }
+    } else {
+      // _enableSwipe = true;
     }
   }
 
