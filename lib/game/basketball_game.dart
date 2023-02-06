@@ -29,6 +29,10 @@ class BasketBallGame extends Forge2DGame
       AudioAssets.hitWall,
       AudioAssets.hitWall2,
       AudioAssets.swish1,
+      AudioAssets.swish2,
+      AudioAssets.buzzer,
+      AudioAssets.shoot,
+      AudioAssets.shoot2
     ]);
     add(
       MuralComponent(),

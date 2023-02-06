@@ -22,12 +22,11 @@ class BallComponent extends BodyComponent with Draggable, ContactCallbacks {
   bool _canSwipe = true;
   bool _hasPeaked = false;
   bool _createNewBall = false;
-  bool _hasHitFloor = false;
+  bool _canDrag = true;
   final Random _ballPosition = Random();
 
   @override
   Future<void> onLoad() async {
-
     await super.onLoad();
     _ball = SpriteComponent()
       ..sprite = await gameRef.loadSprite(ImageAssets.basketballSprite)
@@ -35,12 +34,12 @@ class BallComponent extends BodyComponent with Draggable, ContactCallbacks {
       ..opacity = 1
       ..size = Vector2.all(11);
     add(_ball);
-    renderBody = true;
+    renderBody = false;
   }
 
   @override
   Body createBody() {
-    Shape shape = CircleShape()..radius = 5.6;
+    Shape shape = CircleShape()..radius = 5.5;
     Filter filter = Filter();
     filter.categoryBits = 0x0002;
     filter.maskBits = 0x0001;
@@ -58,6 +57,12 @@ class BallComponent extends BodyComponent with Draggable, ContactCallbacks {
     FixtureDef fixtureDef = FixtureDef(shape,
         friction: 0.4, density: 5.0, restitution: 0, filter: filter);
     return world.createBody(bodyDef)..createFixture(fixtureDef);
+  }
+
+  @override
+  bool onDragStart(DragStartInfo info) {
+    FlameAudio.play(AudioAssets.shoot2,volume: 0.5);
+    return super.onDragStart(info);
   }
 
   @override
@@ -81,7 +86,6 @@ class BallComponent extends BodyComponent with Draggable, ContactCallbacks {
     double ratio = (maxHeight - height) / (maxHeight - minHeight);
     double size = min(max(ratio, 0.0), 1.0);
     _ball.width = 9.15 + (size * 2);
-
     _ball.height = 9.15 + (size * 2);
     body.sleepTime = 1;
     if (body.position.y <= 55) {
@@ -113,12 +117,9 @@ class BallComponent extends BodyComponent with Draggable, ContactCallbacks {
   @override
   void beginContact(Object other, Contact contact) {
     super.beginContact(other, contact);
-    if (other is FloorComponent && !_canSwipe && !_hasHitFloor) {
-      FlameAudio.play(AudioAssets.bounce1, volume: 0.4);
-      _hasHitFloor = true;
-    }
+
     if (other is WallComponent) {
-      FlameAudio.play(AudioAssets.hitWall, volume: 0.5);
+      FlameAudio.play(AudioAssets.hitWall2, volume: 0.2);
     }
   }
 }
