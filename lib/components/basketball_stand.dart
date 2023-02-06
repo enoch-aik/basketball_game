@@ -12,6 +12,8 @@ class BasketBallStandComponent extends BodyComponent {
     renderBody = false;
     add(CustomPainterComponent()
       ..position = Vector2(45, 120)
+      ..height = 50
+      ..width = 50
       ..anchor = Anchor.center
       ..painter = BasketballStandCustomPainter());
   }

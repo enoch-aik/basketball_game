@@ -1,8 +1,4 @@
-import 'package:basketball_game/components/ball.dart';
-import 'package:basketball_game/constants/audio.dart';
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 
 List<Component> createBoundaries(Forge2DGame game) {
@@ -13,18 +9,20 @@ List<Component> createBoundaries(Forge2DGame game) {
 
   return [
     WallComponent(topLeft, topRight),
-    WallComponent(topRight, bottomRight),
-    FloorComponent(bottomRight, bottomLeft, isBottom: true),
-    WallComponent(bottomLeft, topLeft),
+    WallComponent(Vector2(bottomRight.x, bottomRight.y - 8), bottomRight),
+    FloorComponent(bottomRight, bottomLeft),
+    WallComponent(bottomLeft, Vector2(bottomLeft.x, bottomLeft.y - 8)),
   ];
 }
 
 class WallComponent extends BodyComponent with ContactCallbacks {
   final Vector2 start;
   final Vector2 end;
-  final bool isBottom;
 
-  WallComponent(this.start, this.end, {this.isBottom = true});
+  WallComponent(
+    this.start,
+    this.end,
+  );
 
   @override
   Body createBody() {
@@ -49,9 +47,11 @@ class WallComponent extends BodyComponent with ContactCallbacks {
 class FloorComponent extends BodyComponent with ContactCallbacks {
   final Vector2 start;
   final Vector2 end;
-  final bool isBottom;
 
-  FloorComponent(this.start, this.end, {this.isBottom = true});
+  FloorComponent(
+    this.start,
+    this.end,
+  );
 
   @override
   Body createBody() {
@@ -72,5 +72,4 @@ class FloorComponent extends BodyComponent with ContactCallbacks {
 
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
-
 }

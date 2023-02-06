@@ -1,4 +1,7 @@
+import 'package:basketball_game/backboard.dart';
+import 'package:basketball_game/components/backboard.dart';
 import 'package:basketball_game/components/ball.dart';
+import 'package:basketball_game/components/basketball_stand.dart';
 import 'package:basketball_game/components/boundary.dart';
 import 'package:basketball_game/components/mural_component.dart';
 import 'package:basketball_game/constants/audio.dart';
@@ -36,8 +39,11 @@ class BasketBallGame extends Forge2DGame
     ]);
     add(
       MuralComponent(),
+
       //BasketBallStandComponent(),
     );
+    //add(BasketBallStandComponent());
+    add(BackboardComponent(),);
     add(BallComponent(
       gameSize,
     ));

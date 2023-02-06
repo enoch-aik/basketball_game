@@ -55,13 +55,16 @@ class BallComponent extends BodyComponent with Draggable, ContactCallbacks {
       type: BodyType.dynamic,
     );
     FixtureDef fixtureDef = FixtureDef(shape,
-        friction: 0.4, density: 5.0, restitution: 0, filter: filter);
+        friction: 0.4, density: 4.0, restitution: 0.1, filter: filter);
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 
   @override
   bool onDragStart(DragStartInfo info) {
-    FlameAudio.play(AudioAssets.shoot2,volume: 0.5);
+    if (_canDrag) {
+      FlameAudio.play(AudioAssets.shoot2, volume: 0.5);
+      _canDrag = false;
+    }
     return super.onDragStart(info);
   }
 
@@ -69,7 +72,7 @@ class BallComponent extends BodyComponent with Draggable, ContactCallbacks {
   bool onDragUpdate(DragUpdateInfo info) {
     if (_canSwipe) {
       body.applyLinearImpulse(
-        Vector2(info.delta.game.x, -3) * 2000,
+        Vector2(info.delta.game.x, -3.2) * 2000,
       );
       _createNewBall = true;
     }
@@ -85,14 +88,14 @@ class BallComponent extends BodyComponent with Draggable, ContactCallbacks {
     double minHeight = gameRef.size.y;
     double ratio = (maxHeight - height) / (maxHeight - minHeight);
     double size = min(max(ratio, 0.0), 1.0);
-    _ball.width = 9.15 + (size * 2);
-    _ball.height = 9.15 + (size * 2);
+    _ball.width = 8.21 + (size * 3);
+    _ball.height = 8.21 + (size * 3);
     body.sleepTime = 1;
     if (body.position.y <= 55) {
       _canSwipe = false;
       if (body.position.y <= 20) {
         body.applyForce(
-            Vector2(0, 15000 * body.position.distanceTo(Vector2(0, 0))),
+            Vector2(0, 8000 * body.position.distanceTo(Vector2(0, 0))),
             point: body.position);
       } else if (body.linearVelocity.y < Vector2.all(1).y && !_hasPeaked) {
         _hasPeaked = true;
@@ -111,6 +114,10 @@ class BallComponent extends BodyComponent with Draggable, ContactCallbacks {
       }
 
       //game.add(BallComponent(position));
+    }
+    if (body.position.x > gameRef.size.x || body.position.x < 0) {
+      world.destroyBody(body);
+      gameRef.remove(this);
     }
   }
 
