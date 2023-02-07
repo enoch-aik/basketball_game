@@ -11,3 +11,12 @@ class MuralComponent extends SpriteComponent with HasGameRef<BasketBallGame> {
     size = gameRef.size;
   }
 }
+class NewRimComponent extends SpriteComponent with HasGameRef<BasketBallGame> {
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+
+    sprite = await gameRef.loadSprite(ImageAssets.mural5);
+
+  }
+}

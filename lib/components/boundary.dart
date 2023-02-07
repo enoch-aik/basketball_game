@@ -2,8 +2,9 @@ import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 
 List<Component> createBoundaries(Forge2DGame game) {
+  Vector2 gameSize = game.screenToWorld(game.camera.viewport.effectiveSize);
   final topLeft = Vector2.zero();
-  final bottomRight = game.screenToWorld(game.camera.viewport.effectiveSize);
+  final bottomRight = Vector2(gameSize.x, gameSize.y);
   final topRight = Vector2(bottomRight.x, topLeft.y);
   final bottomLeft = Vector2(topLeft.x, bottomRight.y);
 
@@ -55,18 +56,15 @@ class FloorComponent extends BodyComponent with ContactCallbacks {
 
   @override
   Body createBody() {
-    /* Filter filter = Filter();
-    filter.categoryBits = isBottom ? 0x0001 : 0x0002;
-    filter.maskBits = isBottom ? 0x0002 : 0x0001;*/
     final shape = EdgeShape()..set(start, end);
     final fixtureDef = FixtureDef(
       shape,
-      friction: 0.3,
+      friction: 1,
       restitution: .3,
       //filter: filter
     );
     final bodyDef = BodyDef(
-      userData: this, // To be able to determine object in collision
+      userData: this,
       position: Vector2.zero(),
     );
 

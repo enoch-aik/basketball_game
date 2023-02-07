@@ -9,4 +9,5 @@ class ImageAssets {
   static const String mural3 = 'mural3.jpeg';
   static const String mural4 = 'mural4.png';
   static const String mural5 = 'mural5.JPG';
+
 }
