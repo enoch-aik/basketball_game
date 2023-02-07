@@ -9,7 +9,6 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
-import 'package:flame_audio/audio_pool.dart';
 
 class BallComponent extends BodyComponent
     with Draggable, CollisionCallbacks, ContactCallbacks {
@@ -35,39 +34,38 @@ class BallComponent extends BodyComponent
       ..sprite = await gameRef.loadSprite(ImageAssets.basketballSprite)
       ..anchor = Anchor.center
       ..opacity = 1
-      ..size = Vector2.all(10);
+      ..size = Vector2.all(9);
     add(_ball);
-    renderBody =
-        false; /*
-    newLeftRim = RimComponent(Vector2(12, 28), true);
-    newRightRim = RimComponent(Vector2(24, 28), true);*/
+    renderBody = false;
+
   }
 
   @override
   Body createBody() {
     Shape shape = CircleShape();
-    shape.radius = 4.5;
+    shape.radius = 4.0;
     Vector2 ballPos = Vector2(
         _ballPosition.nextInt(gameRef.size.x ~/ 1.15).toDouble() + 1,
         gameRef.size.y);
     print(ballPos);
     BodyDef bodyDef = BodyDef(
-      linearDamping: 0.8,
+      linearDamping: 1,
       userData: this,
       angularDamping: .8,
+      //linearVelocity: Vector2(0, 50),
+      angularVelocity: .3,
       position: ballPos,
       type: BodyType.dynamic,
     );
     fixtureDef = FixtureDef(shape,
-        friction: 0.1, density: 4.0, restitution: 0.2, filter: filter);
-
+        friction: 0.1, density: 4.0, restitution: 0.1, filter: filter);
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 
   @override
   bool onDragStart(DragStartInfo info) {
     if (_canDrag) {
-      FlameAudio.play(AudioAssets.shoot2, volume: 0.5);
+      FlameAudio.play(AudioAssets.shoot2, volume: 0.2);
       _canDrag = false;
     }
     return super.onDragStart(info);
@@ -77,7 +75,7 @@ class BallComponent extends BodyComponent
   bool onDragUpdate(DragUpdateInfo info) {
     if (_canSwipe) {
       body.applyLinearImpulse(
-        Vector2(info.delta.game.x, -4.2) * 2000,
+        Vector2(info.delta.game.x, -5.2) * 2000,
       );
       _createNewBall = true;
     }
@@ -98,7 +96,7 @@ class BallComponent extends BodyComponent
               ..maskBits = 2
               ..categoryBits = 4));
         body.applyForce(
-            Vector2(0, 10000 * body.position.distanceTo(Vector2(0, 0))),
+            Vector2(0, 8000 * body.position.distanceTo(Vector2(0, 0))),
             point: body.position);
       } else if (body.linearVelocity.y < Vector2.all(0.1).y && !_hasPeaked) {
         _hasPeaked = true;
@@ -121,7 +119,7 @@ class BallComponent extends BodyComponent
     if (body.position.x > gameRef.size.x || body.position.x < 0) {
       world.destroyBody(body);
       gameRef.remove(this);
-    }
+    } else {}
   }
 
   @override
@@ -132,7 +130,7 @@ class BallComponent extends BodyComponent
       //  FlameAudio.play(AudioAssets.hitWall2, volume: 0.2);
     }
     if (other is RimComponent && _hasPeaked && !_hasHitRim) {
-      FlameAudio.play(AudioAssets.hitWall, volume: 0.2);
+      FlameAudio.play(AudioAssets.hitWall, volume: 0.1);
       _hasHitRim = true;
     }
   }

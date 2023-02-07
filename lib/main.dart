@@ -1,3 +1,4 @@
+import 'package:basketball_game/components/flamed_ball.dart';
 import 'package:basketball_game/game/basketball_game.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';

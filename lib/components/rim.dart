@@ -38,7 +38,7 @@ class RimComponent extends BodyComponent with Draggable, ContactCallbacks {
       type: BodyType.static,
     );
     FixtureDef fixtureDef =
-        FixtureDef(shape, friction: .1, restitution: .3, filter: filter);
+        FixtureDef(shape, friction: .1, restitution: .2, filter: filter);
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 
