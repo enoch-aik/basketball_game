@@ -23,6 +23,7 @@ class BallComponent extends BodyComponent
   bool _hasPeaked = false;
   bool _createNewBall = false;
   bool _canDrag = true;
+  bool _hasHitRim = false;
 
   //double _ballRadius = 4.5;
   final Random _ballPosition = Random();
@@ -47,9 +48,9 @@ class BallComponent extends BodyComponent
     Shape shape = CircleShape();
     shape.radius = 4.5;
     Vector2 ballPos = Vector2(
-        _ballPosition.nextInt(gameRef.size.x ~/ 1).toDouble(),
+        _ballPosition.nextInt(gameRef.size.x ~/ 1.15).toDouble() + 1,
         gameRef.size.y);
-    // print(ballPos);
+    print(ballPos);
     BodyDef bodyDef = BodyDef(
       linearDamping: 0.8,
       userData: this,
@@ -58,7 +59,7 @@ class BallComponent extends BodyComponent
       type: BodyType.dynamic,
     );
     fixtureDef = FixtureDef(shape,
-        friction: 0.4, density: 4.0, restitution: 0.1, filter: filter);
+        friction: 0.1, density: 4.0, restitution: 0.2, filter: filter);
 
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
@@ -76,7 +77,7 @@ class BallComponent extends BodyComponent
   bool onDragUpdate(DragUpdateInfo info) {
     if (_canSwipe) {
       body.applyLinearImpulse(
-        Vector2(info.delta.game.x, -3.2) * 2000,
+        Vector2(info.delta.game.x, -4.2) * 2000,
       );
       _createNewBall = true;
     }
@@ -89,7 +90,6 @@ class BallComponent extends BodyComponent
   @override
   void update(double dt) {
     super.update(dt);
-    body.sleepTime = 1;
     if (body.position.y <= 55) {
       _canSwipe = false;
       if (body.position.y <= 18) {
@@ -98,9 +98,9 @@ class BallComponent extends BodyComponent
               ..maskBits = 2
               ..categoryBits = 4));
         body.applyForce(
-            Vector2(0, 8000 * body.position.distanceTo(Vector2(0, 0))),
+            Vector2(0, 10000 * body.position.distanceTo(Vector2(0, 0))),
             point: body.position);
-      } else if (body.linearVelocity.y < Vector2.all(1).y && !_hasPeaked) {
+      } else if (body.linearVelocity.y < Vector2.all(0.1).y && !_hasPeaked) {
         _hasPeaked = true;
         _createNewBall ? gameRef.add(BallComponent()) : null;
         _createNewBall = false;
@@ -113,7 +113,6 @@ class BallComponent extends BodyComponent
       _ball.opacity == 0.02 ? body.setAwake(false) : null;
       if (!body.isAwake || !body.isActive) {
         world.destroyBody(body);
-
         gameRef.remove(this);
       }
 
@@ -130,10 +129,11 @@ class BallComponent extends BodyComponent
     super.beginContact(other, contact);
 
     if (other is WallComponent) {
-      FlameAudio.play(AudioAssets.hitWall2, volume: 0.2);
+      //  FlameAudio.play(AudioAssets.hitWall2, volume: 0.2);
     }
-    if (other is RimComponent && !_hasPeaked) {
-      contact.setEnabled(false);
+    if (other is RimComponent && _hasPeaked && !_hasHitRim) {
+      FlameAudio.play(AudioAssets.hitWall, volume: 0.2);
+      _hasHitRim = true;
     }
   }
 /*@override

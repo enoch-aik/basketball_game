@@ -27,17 +27,18 @@ class RimComponent extends BodyComponent with Draggable, ContactCallbacks {
     Filter filter = Filter()
       ..categoryBits = collidesWithBall ? 0x0001 : 0x0002
       ..maskBits = collidesWithBall ? 0x0002 : 0x0004;
-    Shape shape = CircleShape()..radius = 0.5;
+    Shape shape = CircleShape()..radius = 0.6;
     // print(ballPos);
     BodyDef bodyDef = BodyDef(
-      linearDamping: 0.5,
+      //linearDamping: 0.5,
       userData: this,
-      angularDamping: .8,
+      gravityScale: Vector2(0,20),
+      //angularDamping: .8,
       position: position,
       type: BodyType.static,
     );
-    FixtureDef fixtureDef = FixtureDef(shape,
-        friction: 0.5, density: 4.0, restitution: 0.0, filter: filter);
+    FixtureDef fixtureDef =
+        FixtureDef(shape, friction: .1, restitution: .3, filter: filter);
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 
