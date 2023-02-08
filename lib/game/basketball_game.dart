@@ -35,20 +35,14 @@ class BasketBallGame extends Forge2DGame
       AudioAssets.shoot,
       AudioAssets.shoot2
     ]);
-    add(
+    addAll([
       MuralComponent(),
-
-      //BasketBallStandComponent(),
-    );
-    //add(BasketBallStandComponent());
-    add(
       BackboardComponent(),
-    );
-    /*add(
-      BackboardSvgComponent(),
-    );*/
-    add(RimComponent(Vector2((gameSize.x/2)+5.8, 28), false));
-    add(RimComponent(Vector2((gameSize.x/2)-5.8, 28), false));
-    add(BallComponent());
+      RimComponent(Vector2((gameSize.x/2)+6, 28), false),
+      RimComponent(Vector2((gameSize.x/2)-6.7, 28), false),
+      BackRimComponent(),
+      FrontRimComponent(),
+      BallComponent()
+    ]);
   }
 }

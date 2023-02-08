@@ -8,6 +8,8 @@ import '../game/basketball_game.dart';
 
 class BackboardComponent extends SpriteComponent
     with HasGameRef<BasketBallGame> {
+
+  BackboardComponent(): super(priority: 1);
   @override
   void onLoad() async{
     super.onLoad();

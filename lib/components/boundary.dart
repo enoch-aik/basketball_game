@@ -4,7 +4,7 @@ import 'package:flame_forge2d/flame_forge2d.dart';
 List<Component> createBoundaries(Forge2DGame game) {
   Vector2 gameSize = game.screenToWorld(game.camera.viewport.effectiveSize);
   final topLeft = Vector2.zero();
-  final bottomRight = Vector2(gameSize.x, gameSize.y);
+  final bottomRight = Vector2(gameSize.x, gameSize.y-2);
   final topRight = Vector2(bottomRight.x, topLeft.y);
   final bottomLeft = Vector2(topLeft.x, bottomRight.y);
 

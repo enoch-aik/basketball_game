@@ -3,6 +3,8 @@ import 'package:basketball_game/game/basketball_game.dart';
 import 'package:flame/components.dart';
 
 class MuralComponent extends SpriteComponent with HasGameRef<BasketBallGame> {
+
+  MuralComponent(): super(priority: 0);
   @override
   Future<void> onLoad() async {
     await super.onLoad();

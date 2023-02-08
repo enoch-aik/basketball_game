@@ -7,11 +7,13 @@ import 'package:basketball_game/constants/image_assets.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/flame.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 
 class BallComponent extends BodyComponent
     with Draggable, CollisionCallbacks, ContactCallbacks {
+  BallComponent() : super(priority: 7);
   late SpriteComponent _ball;
   late Filter filter = Filter()
     ..categoryBits = 2
@@ -34,10 +36,9 @@ class BallComponent extends BodyComponent
       ..sprite = await gameRef.loadSprite(ImageAssets.basketballSprite)
       ..anchor = Anchor.center
       ..opacity = 1
-      ..size = Vector2.all(9);
+      ..size = Vector2.all(8.8);
     add(_ball);
     renderBody = false;
-
   }
 
   @override
@@ -46,19 +47,19 @@ class BallComponent extends BodyComponent
     shape.radius = 4.0;
     Vector2 ballPos = Vector2(
         _ballPosition.nextInt(gameRef.size.x ~/ 1.15).toDouble() + 1,
-        gameRef.size.y);
+        gameRef.size.y-3);
     print(ballPos);
     BodyDef bodyDef = BodyDef(
-      linearDamping: 1,
+      linearDamping: 0.6,
       userData: this,
-      angularDamping: .8,
+      angularDamping: 0,
       //linearVelocity: Vector2(0, 50),
-      angularVelocity: .3,
+      angularVelocity: 0,
       position: ballPos,
       type: BodyType.dynamic,
     );
     fixtureDef = FixtureDef(shape,
-        friction: 0.1, density: 4.0, restitution: 0.1, filter: filter);
+        friction: 0, density: 3.0, restitution: 0.15, filter: filter);
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 
@@ -74,8 +75,9 @@ class BallComponent extends BodyComponent
   @override
   bool onDragUpdate(DragUpdateInfo info) {
     if (_canSwipe) {
+      body.linearVelocity = info.delta.game*100;
       body.applyLinearImpulse(
-        Vector2(info.delta.game.x, -5.2) * 2000,
+        Vector2(info.delta.game.x, -5)*8000 ,
       );
       _createNewBall = true;
     }
@@ -90,13 +92,14 @@ class BallComponent extends BodyComponent
     super.update(dt);
     if (body.position.y <= 55) {
       _canSwipe = false;
-      if (body.position.y <= 18) {
+      if (body.position.y <= 15) {
         body.createFixture(FixtureDef(CircleShape()..radius = 4.5,
             filter: Filter()
               ..maskBits = 2
               ..categoryBits = 4));
+        priority = 5;
         body.applyForce(
-            Vector2(0, 8000 * body.position.distanceTo(Vector2(0, 0))),
+            Vector2(0, 15000 * body.position.distanceTo(Vector2(0, 0))),
             point: body.position);
       } else if (body.linearVelocity.y < Vector2.all(0.1).y && !_hasPeaked) {
         _hasPeaked = true;
