@@ -47,7 +47,7 @@ class BallComponent extends BodyComponent
     shape.radius = 4.0;
     Vector2 ballPos = Vector2(
         _ballPosition.nextInt(gameRef.size.x ~/ 1.15).toDouble() + 1,
-        gameRef.size.y-3);
+        gameRef.size.y);
     print(ballPos);
     BodyDef bodyDef = BodyDef(
       linearDamping: 0.6,
@@ -59,7 +59,7 @@ class BallComponent extends BodyComponent
       type: BodyType.dynamic,
     );
     fixtureDef = FixtureDef(shape,
-        friction: 0, density: 3.0, restitution: 0.15, filter: filter);
+        friction: 0, density: 3.0, restitution: 0.2, filter: filter);
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 

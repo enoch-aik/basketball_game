@@ -38,10 +38,8 @@ class RimComponent extends BodyComponent with Draggable, ContactCallbacks {
       position: position,
       type: BodyType.static,
     );
-    FixtureDef fixtureDef =
-        FixtureDef(shape, friction: .0, restitution: .0a,
-            density: 0,
-            filter: filter);
+    FixtureDef fixtureDef = FixtureDef(shape,
+        friction: .0, restitution: .15, density: 0, filter: filter);
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 
@@ -62,7 +60,7 @@ class BackRimComponent extends SpriteComponent with HasGameRef<BasketBallGame> {
   void onLoad() async {
     super.onLoad();
     sprite = await gameRef.loadSprite(ImageAssets.backRim);
-    position = Vector2(gameRef.size.x / 2 - 7, 24.5);
+    position = Vector2(gameRef.size.x / 2 - 7, 26.1);
     width = gameRef.size.x * 0.37;
     height = 2;
     //height = game.size.y * 0.9;
@@ -78,7 +76,7 @@ class FrontRimComponent extends SpriteComponent
   void onLoad() async {
     super.onLoad();
     sprite = await gameRef.loadSprite(ImageAssets.frontRim);
-    position = Vector2(gameRef.size.x / 2 - 7, 26.6);
+    position = Vector2(gameRef.size.x / 2 - 7, 28);
     width = gameRef.size.x * 0.37;
     height = 2;
     //height = game.size.y * 0.9;
