@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:basketball_game/components/ball.dart';
 import 'package:basketball_game/components/boundary.dart';
 import 'package:basketball_game/constants/audio.dart';
 import 'package:basketball_game/constants/image_assets.dart';
@@ -10,7 +11,7 @@ import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flame_audio/audio_pool.dart';
 
-class RimComponent extends BodyComponent with Draggable, ContactCallbacks {
+class RimComponent extends BodyComponent with ContactCallbacks {
   final Vector2 position;
   final bool collidesWithBall;
 
@@ -82,4 +83,51 @@ class FrontRimComponent extends SpriteComponent
     //height = game.size.y * 0.9;
     //anchor = Anchor.center;
   }
+}
+/*
+class RimLineComponent extends SpriteComponent
+    with HasGameRef<BasketBallGame> {
+  RimLineComponent() : super(priority: 6);
+
+  @override
+  void onLoad() async {
+    super.onLoad();
+    sprite = await gameRef.loadSprite(ImageAssets.frontRim);
+    position = Vector2(gameRef.size.x / 2 - 7, 30);
+    width = gameRef.size.x * 0.37;
+    height = 2;
+    //height = game.size.y * 0.9;
+    //anchor = Anchor.center;
+  }
+}*/
+class RimLineComponent extends BodyComponent with ContactCallbacks {
+  RimLineComponent() : super(priority: 2);
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    //add(_ball);
+    renderBody = false;
+  }
+
+  @override
+  Body createBody() {
+    Vector2 gameSize = gameRef.size;
+
+    Filter filter = Filter()
+      ..categoryBits = 5
+      ..maskBits = 5;
+    Shape shape = EdgeShape()
+      ..set(Vector2((gameSize.x / 2) - 6.7, 30),
+          Vector2((gameSize.x / 2) + 6, 30));
+    // print(ballPos);
+    BodyDef bodyDef = BodyDef(
+      userData: this,
+      position: Vector2.zero(),
+      type: BodyType.static,
+    );
+    FixtureDef fixtureDef = FixtureDef(shape, filter: filter);
+    return world.createBody(bodyDef)..createFixture(fixtureDef);
+  }
+
 }

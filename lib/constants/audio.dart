@@ -11,4 +11,5 @@ class AudioAssets {
   static const String buzzer = 'buzzer.wav';
   static const String shoot = 'shot.wav';
   static const String shoot2 = 'shot2.wav';
+  static const String bgAudio = 'bg_audio.mp3';
 }

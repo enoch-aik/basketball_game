@@ -3,7 +3,7 @@ class ImageAssets {
 
   static const String basketballSprite = 'basketball.png';
   static const String flamedBasketballSprite =
-      'basketball_flame.png';
+      'assets/images/basketball_flame.png';
   static const String backboard= 'backboard.png';
   static const String stand= 'basketball_stand.png';
   static const String backRim= 'back_rim.png';
