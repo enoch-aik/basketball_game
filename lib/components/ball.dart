@@ -75,9 +75,9 @@ class BallComponent extends BodyComponent
   @override
   bool onDragUpdate(DragUpdateInfo info) {
     if (_canSwipe) {
-      body.linearVelocity = info.delta.game*100;
+      body.linearVelocity = info.delta.game * 100;
       body.applyLinearImpulse(
-        Vector2(info.delta.game.x, -5)*8000 ,
+        Vector2(info.delta.game.x, -5) * 8000,
       );
       _createNewBall = true;
     }
@@ -128,7 +128,6 @@ class BallComponent extends BodyComponent
   @override
   void beginContact(Object other, Contact contact) {
     super.beginContact(other, contact);
-
     if (other is WallComponent) {
       //  FlameAudio.play(AudioAssets.hitWall2, volume: 0.2);
     }

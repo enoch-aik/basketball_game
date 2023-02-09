@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:basketball_game/game/basketball_game.dart';
+import 'package:basketball_game/widgets/scoreboard.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -12,7 +13,7 @@ class MainMenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Game basketballGame = BasketBallGame();
+    BasketBallGame basketballGame = BasketBallGame();
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
       body: Stack(
@@ -50,7 +51,24 @@ class MainMenuScreen extends StatelessWidget {
                           height: 40,
                           child: ElevatedButton(
                               onPressed: () {
-                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>GameWidget(game: basketballGame)));
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => GameWidget(
+                                              game: basketballGame,
+                                              overlayBuilderMap: {
+                                                'scoreboard': (ctx,
+                                                        Game game) =>
+                                                    ScoreBoard(
+                                                        game: basketballGame),
+                                                'timer': (ctx, Game game) =>
+                                                    ScoreBoard(
+                                                        game: basketballGame)
+                                              },
+                                              initialActiveOverlays: const [
+                                                'scoreboard'
+                                              ],
+                                            )));
                               },
                               child: const Text(
                                 'Start Game',
