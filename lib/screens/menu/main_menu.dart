@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:basketball_game/game/basketball_game.dart';
+import 'package:basketball_game/screens/menu/game_over.dart';
 import 'package:basketball_game/widgets/scoreboard.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
@@ -57,21 +58,24 @@ class MainMenuScreen extends StatelessWidget {
                                         builder: (context) => GameWidget(
                                               game: basketballGame,
                                               overlayBuilderMap: {
-                                                'scoreboard': (ctx,
-                                                        Game game) =>
-                                                    ScoreBoard(
-                                                        game: basketballGame),
-                                                'timer': (ctx, Game game) =>
-                                                    ScoreBoard(
-                                                        game: basketballGame),
-                                                Menu.main.name:
+                                                GameOverlays.scoreboard.name:
+                                                    (ctx, Game game) =>
+                                                        ScoreBoard(
+                                                            game:
+                                                                basketballGame),
+                                                GameOverlays.gameOver.name:
+                                                    (ctx, Game game) =>
+                                                        GameOverScreen(
+                                                            game:
+                                                                basketballGame),
+                                                GameOverlays.main.name:
                                                     (BuildContext context,
                                                             BasketBallGame
                                                                 gameRef) =>
                                                         const MainMenuScreen(),
                                               },
-                                              initialActiveOverlays: const [
-                                                'scoreboard'
+                                              initialActiveOverlays: [
+                                                GameOverlays.scoreboard.name
                                               ],
                                             )));
                               },
