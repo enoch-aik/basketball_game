@@ -1,75 +1,83 @@
 import 'dart:math';
 
 import 'package:basketball_game/components/boundary.dart';
+import 'package:basketball_game/components/rim.dart';
 import 'package:basketball_game/constants/audio.dart';
 import 'package:basketball_game/constants/image_assets.dart';
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/flame.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
-import 'package:flame_audio/audio_pool.dart';
 
-class BallComponent extends BodyComponent with Draggable, ContactCallbacks {
-  final Vector2 position;
+class BallComponent extends BodyComponent
+    with Draggable, CollisionCallbacks, ContactCallbacks {
+  BallComponent() : super(priority: 7);
   late SpriteComponent _ball;
-  late AudioPool bounce;
-  late AudioPool hitRim;
-  late AudioPool hitWall;
-  late AudioPool swish;
-
-  BallComponent(this.position);
+  late Filter filter = Filter()
+    ..categoryBits = 2
+    ..maskBits = 1;
+  late FixtureDef fixtureDef;
 
   bool _canSwipe = true;
   bool _hasPeaked = false;
   bool _createNewBall = false;
   bool _canDrag = true;
+  bool _hasHitRim = false;
+
+  //double _ballRadius = 4.5;
   final Random _ballPosition = Random();
 
   @override
   Future<void> onLoad() async {
-    await super.onLoad();
+    super.onLoad();
     _ball = SpriteComponent()
       ..sprite = await gameRef.loadSprite(ImageAssets.basketballSprite)
       ..anchor = Anchor.center
       ..opacity = 1
-      ..size = Vector2.all(11);
+      ..size = Vector2.all(8.8);
     add(_ball);
     renderBody = false;
   }
 
   @override
   Body createBody() {
-    Shape shape = CircleShape()..radius = 5.5;
-    Filter filter = Filter();
-    filter.categoryBits = 0x0002;
-    filter.maskBits = 0x0001;
+    Shape shape = CircleShape();
+    shape.radius = 4.0;
     Vector2 ballPos = Vector2(
-        _ballPosition.nextInt(gameRef.size.x ~/ 1.15).toDouble() + 0.2,
-        position.y);
-    // print(ballPos);
+        _ballPosition.nextInt(gameRef.size.x ~/ 1.15).toDouble() + 1,
+        gameRef.size.y);
+    print(ballPos);
     BodyDef bodyDef = BodyDef(
-      linearDamping: 0.5,
+      linearDamping: 0.6,
       userData: this,
-      angularDamping: .8,
+      angularDamping: 0,
+      //linearVelocity: Vector2(0, 50),
+      angularVelocity: 0,
       position: ballPos,
       type: BodyType.dynamic,
     );
-    FixtureDef fixtureDef = FixtureDef(shape,
-        friction: 0.4, density: 5.0, restitution: 0, filter: filter);
+    fixtureDef = FixtureDef(shape,
+        friction: 0, density: 3.0, restitution: 0.2, filter: filter);
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 
   @override
   bool onDragStart(DragStartInfo info) {
-    FlameAudio.play(AudioAssets.shoot2,volume: 0.5);
+    if (_canDrag) {
+      FlameAudio.play(AudioAssets.shoot2, volume: 0.2);
+      _canDrag = false;
+    }
     return super.onDragStart(info);
   }
 
   @override
   bool onDragUpdate(DragUpdateInfo info) {
     if (_canSwipe) {
+      body.linearVelocity = info.delta.game*100;
       body.applyLinearImpulse(
-        Vector2(info.delta.game.x, -3) * 2000,
+        Vector2(info.delta.game.x, -5)*8000 ,
       );
       _createNewBall = true;
     }
@@ -77,26 +85,25 @@ class BallComponent extends BodyComponent with Draggable, ContactCallbacks {
     return true;
   }
 
+  int i = 1;
+
   @override
   void update(double dt) {
     super.update(dt);
-    double height = body.position.y;
-    double maxHeight = 0;
-    double minHeight = gameRef.size.y;
-    double ratio = (maxHeight - height) / (maxHeight - minHeight);
-    double size = min(max(ratio, 0.0), 1.0);
-    _ball.width = 9.15 + (size * 2);
-    _ball.height = 9.15 + (size * 2);
-    body.sleepTime = 1;
     if (body.position.y <= 55) {
       _canSwipe = false;
-      if (body.position.y <= 20) {
+      if (body.position.y <= 15) {
+        body.createFixture(FixtureDef(CircleShape()..radius = 4.5,
+            filter: Filter()
+              ..maskBits = 2
+              ..categoryBits = 4));
+        priority = 5;
         body.applyForce(
             Vector2(0, 15000 * body.position.distanceTo(Vector2(0, 0))),
             point: body.position);
-      } else if (body.linearVelocity.y < Vector2.all(1).y && !_hasPeaked) {
+      } else if (body.linearVelocity.y < Vector2.all(0.1).y && !_hasPeaked) {
         _hasPeaked = true;
-        _createNewBall ? gameRef.add(BallComponent(position)) : null;
+        _createNewBall ? gameRef.add(BallComponent()) : null;
         _createNewBall = false;
       }
     }
@@ -112,6 +119,10 @@ class BallComponent extends BodyComponent with Draggable, ContactCallbacks {
 
       //game.add(BallComponent(position));
     }
+    if (body.position.x > gameRef.size.x || body.position.x < 0) {
+      world.destroyBody(body);
+      gameRef.remove(this);
+    } else {}
   }
 
   @override
@@ -119,7 +130,20 @@ class BallComponent extends BodyComponent with Draggable, ContactCallbacks {
     super.beginContact(other, contact);
 
     if (other is WallComponent) {
-      FlameAudio.play(AudioAssets.hitWall2, volume: 0.2);
+      //  FlameAudio.play(AudioAssets.hitWall2, volume: 0.2);
+    }
+    if (other is RimComponent && _hasPeaked && !_hasHitRim) {
+      FlameAudio.play(AudioAssets.hitWall, volume: 0.1);
+      _hasHitRim = true;
     }
   }
+/*@override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollision(intersectionPoints, other);
+    bool isCollidingVertically =
+        (intersectionPoints.first.y - intersectionPoints.last.y).abs() < 5;
+    if(other is RimComponent && isCollidingVertically&& body.linearVelocity.y<0){
+      return;
+    }
+  }*/
 }

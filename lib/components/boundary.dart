@@ -1,30 +1,29 @@
-import 'package:basketball_game/components/ball.dart';
-import 'package:basketball_game/constants/audio.dart';
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 
 List<Component> createBoundaries(Forge2DGame game) {
+  Vector2 gameSize = game.screenToWorld(game.camera.viewport.effectiveSize);
   final topLeft = Vector2.zero();
-  final bottomRight = game.screenToWorld(game.camera.viewport.effectiveSize);
+  final bottomRight = Vector2(gameSize.x, gameSize.y);
   final topRight = Vector2(bottomRight.x, topLeft.y);
   final bottomLeft = Vector2(topLeft.x, bottomRight.y);
 
   return [
     WallComponent(topLeft, topRight),
-    WallComponent(topRight, bottomRight),
-    FloorComponent(bottomRight, bottomLeft, isBottom: true),
-    WallComponent(bottomLeft, topLeft),
+    WallComponent(Vector2(bottomRight.x, bottomRight.y - 8), bottomRight),
+    FloorComponent(bottomRight, bottomLeft),
+    WallComponent(bottomLeft, Vector2(bottomLeft.x, bottomLeft.y - 8)),
   ];
 }
 
 class WallComponent extends BodyComponent with ContactCallbacks {
   final Vector2 start;
   final Vector2 end;
-  final bool isBottom;
 
-  WallComponent(this.start, this.end, {this.isBottom = true});
+  WallComponent(
+    this.start,
+    this.end,
+  );
 
   @override
   Body createBody() {
@@ -49,28 +48,26 @@ class WallComponent extends BodyComponent with ContactCallbacks {
 class FloorComponent extends BodyComponent with ContactCallbacks {
   final Vector2 start;
   final Vector2 end;
-  final bool isBottom;
 
-  FloorComponent(this.start, this.end, {this.isBottom = true});
+  FloorComponent(
+    this.start,
+    this.end,
+  );
 
   @override
   Body createBody() {
-    /* Filter filter = Filter();
-    filter.categoryBits = isBottom ? 0x0001 : 0x0002;
-    filter.maskBits = isBottom ? 0x0002 : 0x0001;*/
     final shape = EdgeShape()..set(start, end);
     final fixtureDef = FixtureDef(
       shape,
-      friction: 0.3,
+      friction: 1,
       restitution: .3,
       //filter: filter
     );
     final bodyDef = BodyDef(
-      userData: this, // To be able to determine object in collision
+      userData: this,
       position: Vector2.zero(),
     );
 
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
-
 }
