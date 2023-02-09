@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:basketball_game/components/ball.dart';
 import 'package:basketball_game/components/boundary.dart';
 import 'package:basketball_game/constants/audio.dart';
 import 'package:basketball_game/constants/image_assets.dart';
@@ -83,15 +84,30 @@ class FrontRimComponent extends SpriteComponent
     //anchor = Anchor.center;
   }
 }
+/*
+class RimLineComponent extends SpriteComponent
+    with HasGameRef<BasketBallGame> {
+  RimLineComponent() : super(priority: 6);
 
+  @override
+  void onLoad() async {
+    super.onLoad();
+    sprite = await gameRef.loadSprite(ImageAssets.frontRim);
+    position = Vector2(gameRef.size.x / 2 - 7, 30);
+    width = gameRef.size.x * 0.37;
+    height = 2;
+    //height = game.size.y * 0.9;
+    //anchor = Anchor.center;
+  }
+}*/
 class RimLineComponent extends BodyComponent with ContactCallbacks {
-  RimLineComponent() : super(priority: 3);
+  RimLineComponent() : super(priority: 2);
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
     //add(_ball);
-    renderBody = true;
+    renderBody = false;
   }
 
   @override
@@ -99,8 +115,8 @@ class RimLineComponent extends BodyComponent with ContactCallbacks {
     Vector2 gameSize = gameRef.size;
 
     Filter filter = Filter()
-      ..categoryBits = 0x0008
-      ..maskBits = 0x0007;
+      ..categoryBits = 5
+      ..maskBits = 5;
     Shape shape = EdgeShape()
       ..set(Vector2((gameSize.x / 2) - 6.7, 30),
           Vector2((gameSize.x / 2) + 6, 30));
@@ -114,12 +130,4 @@ class RimLineComponent extends BodyComponent with ContactCallbacks {
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 
-/*@override
-  void beginContact(Object other, Contact contact) {
-    super.beginContact(other, contact);
-
-    if (other is BodyComponent) {
-      FlameAudio.play(AudioAssets.hitWall2, volume: 0.2);
-    }
-  }*/
 }

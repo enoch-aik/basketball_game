@@ -48,11 +48,11 @@ class BasketBallGame extends Forge2DGame
   void update(double dt) {
     super.update(dt);
     // Update timer.
-    _timer.update(dt);
+    //_timer.update(dt);
 
-    if (timer.value == 0) {
+    /* if (timer.value == 0) {
       pauseEngine();
-    }
+    }*/
 
     // timer.value +=1;
   }
@@ -101,20 +101,20 @@ class BasketBallGame extends Forge2DGame
     ]);
 
     // Configure countdown timer.
-    _timer = Timer(
+    /*_timer = Timer(
       1,
       repeat: true,
       onTick: () {
         if (timer.value == 0) {
           // Pause the game.
-          pauseEngine();
+        pauseEngine();
           // Display game over menu.
         } else {
           // Decrement time by one second.
           timer.value -= 1;
         }
       },
-    );
+    );*/
   }
 }
 

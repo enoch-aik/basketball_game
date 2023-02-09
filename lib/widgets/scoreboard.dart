@@ -44,7 +44,7 @@ class ScoreBoard extends StatelessWidget {
               ValueListenableBuilder(
                   valueListenable: game.timer,
                   builder: (context, time, _) {
-                    String newTime = time < 0 ? '0$time' : time.toString();
+                    String newTime = time < 10 ? '0$time' : time.toString();
                     return Text('00:$newTime <=TIME', style: style);
                   }),
             ],
