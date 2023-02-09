@@ -33,8 +33,10 @@ class BasketBallGame extends Forge2DGame
       AudioAssets.swish2,
       AudioAssets.buzzer,
       AudioAssets.shoot,
-      AudioAssets.shoot2
+      AudioAssets.shoot2,
+      AudioAssets.bgAudio
     ]);
+    FlameAudio.loopLongAudio(AudioAssets.bgAudio,volume: 0.1);
     addAll([
       MuralComponent(),
       BackboardComponent(),

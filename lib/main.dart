@@ -6,11 +6,12 @@ import 'package:flutter/material.dart';
 
 import 'components/ball.dart';
 import 'components/basketball_stand.dart';
+import 'screens/splash.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Flame.device.fullScreen();
-  runApp(GameWidget(game: BasketBallGame()) /*const MyApp()*/);
+  runApp(/*GameWidget(game: BasketBallGame())*/ const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -22,9 +23,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Basketball game',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.brown,
       ),
-      home: const MyHomePage(title: 'Basketball game'),
+        home: const SplashScreen(),
     );
   }
 }
