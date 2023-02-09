@@ -4,6 +4,7 @@ import 'package:basketball_game/components/boundary.dart';
 import 'package:basketball_game/components/rim.dart';
 import 'package:basketball_game/constants/audio.dart';
 import 'package:basketball_game/constants/image_assets.dart';
+import 'package:basketball_game/game/basketball_game.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
@@ -11,7 +12,7 @@ import 'package:flame/flame.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 
-class BallComponent extends BodyComponent
+class BallComponent extends BodyComponent<BasketBallGame>
     with Draggable, CollisionCallbacks, ContactCallbacks {
   BallComponent() : super(priority: 7);
   late SpriteComponent _ball;
@@ -39,6 +40,7 @@ class BallComponent extends BodyComponent
       ..size = Vector2.all(8.8);
     add(_ball);
     renderBody = false;
+    body.sleepTime = 5;
   }
 
   @override
@@ -130,6 +132,9 @@ class BallComponent extends BodyComponent
     super.beginContact(other, contact);
     if (other is WallComponent) {
       //  FlameAudio.play(AudioAssets.hitWall2, volume: 0.2);
+    }
+    if (other is RimLineComponent) {
+      gameRef.score.value += 1;
     }
     if (other is RimComponent && _hasPeaked && !_hasHitRim) {
       FlameAudio.play(AudioAssets.hitWall, volume: 0.1);

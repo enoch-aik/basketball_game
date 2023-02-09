@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:basketball_game/constants/image_assets.dart';
-import 'package:basketball_game/screens/main_menu.dart';
+import 'package:basketball_game/screens/menu/main_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

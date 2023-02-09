@@ -10,7 +10,7 @@ import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flame_audio/audio_pool.dart';
 
-class RimComponent extends BodyComponent with Draggable, ContactCallbacks {
+class RimComponent extends BodyComponent with ContactCallbacks {
   final Vector2 position;
   final bool collidesWithBall;
 
@@ -82,4 +82,44 @@ class FrontRimComponent extends SpriteComponent
     //height = game.size.y * 0.9;
     //anchor = Anchor.center;
   }
+}
+
+class RimLineComponent extends BodyComponent with ContactCallbacks {
+  RimLineComponent() : super(priority: 3);
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    //add(_ball);
+    renderBody = true;
+  }
+
+  @override
+  Body createBody() {
+    Vector2 gameSize = gameRef.size;
+
+    Filter filter = Filter()
+      ..categoryBits = 0x0008
+      ..maskBits = 0x0007;
+    Shape shape = EdgeShape()
+      ..set(Vector2((gameSize.x / 2) - 6.7, 30),
+          Vector2((gameSize.x / 2) + 6, 30));
+    // print(ballPos);
+    BodyDef bodyDef = BodyDef(
+      userData: this,
+      position: Vector2.zero(),
+      type: BodyType.static,
+    );
+    FixtureDef fixtureDef = FixtureDef(shape, filter: filter);
+    return world.createBody(bodyDef)..createFixture(fixtureDef);
+  }
+
+/*@override
+  void beginContact(Object other, Contact contact) {
+    super.beginContact(other, contact);
+
+    if (other is BodyComponent) {
+      FlameAudio.play(AudioAssets.hitWall2, volume: 0.2);
+    }
+  }*/
 }

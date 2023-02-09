@@ -10,28 +10,47 @@ class ScoreBoard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size gameSize = game.size.toSize();
-    return ValueListenableBuilder(
-      valueListenable: game.timer,
-      builder: (context,score,_) {
-        return Padding(
-          padding: const EdgeInsets.only(top: 8.0, left: 4),
-          child: Container(
-            width: 130,
-            height: 40,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-                color: Colors.black, borderRadius: BorderRadius.circular(20)),
-            child: Material(
-              child: Text(
-                'Score: ${game.score}',
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              ),
-              elevation: 0,
-              color: Colors.transparent,
-            ),
+    TextStyle style = TextStyle(
+      fontSize: 20,
+      color: Colors.black,
+      fontWeight: FontWeight.w700,
+      fontFamily: 'Enhanced LED Board-7',
+    );
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0, left: 10),
+      child: Material(
+        elevation: 0,
+        color: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          width: MediaQuery.of(context).size.width * 0.95,
+          height: 65,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.black, width: 4),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15)),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ValueListenableBuilder(
+                  valueListenable: game.score,
+                  builder: (context, score, _) {
+                    return Text(
+                      'PTS=> $score',
+                      style: style,
+                    );
+                  }),
+              ValueListenableBuilder(
+                  valueListenable: game.timer,
+                  builder: (context, time, _) {
+                    String newTime = time < 0 ? '0$time' : time.toString();
+                    return Text('00:$newTime <=TIME', style: style);
+                  }),
+            ],
           ),
-        );
-      }
+        ),
+      ),
     );
   }
 }

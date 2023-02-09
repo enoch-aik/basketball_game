@@ -6,11 +6,14 @@ import 'package:basketball_game/components/mural_component.dart';
 import 'package:basketball_game/components/rim.dart';
 import 'package:basketball_game/constants/audio.dart';
 import 'package:flame/components.dart';
-import 'package:flame/game.dart';
+import 'package:flame/events.dart';
+
+//import 'package:flame/game.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_audio/flame_audio.dart';
-import 'package:flame_forge2d/flame_forge2d.dart';
-import 'package:flutter/material.dart';
+import 'package:flame_forge2d/flame_forge2d.dart' hide Timer;
+import 'package:flutter/foundation.dart';
+import 'package:flutter/rendering.dart';
 
 class BasketBallGame extends Forge2DGame
     with HasDraggables, HasCollisionDetection {
@@ -18,14 +21,17 @@ class BasketBallGame extends Forge2DGame
     //World world = World(Vector2(0,0));
   }
 
-  ValueNotifier<int> timer = ValueNotifier(0);
-  int score = 0;
+  late Timer _timer;
+
+  //int _remainingTime = 30;
+  ValueNotifier<int> timer = ValueNotifier(30);
+  ValueNotifier<int> score = ValueNotifier(0);
   bool startedGame = false;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    TextComponent timerText = TextBoxComponent(
+    /*TextComponent timerText = TextBoxComponent(
         text: '$timer',
         position: Vector2(10, 10),
         anchor: Anchor.topLeft,
@@ -34,9 +40,32 @@ class BasketBallGame extends Forge2DGame
                 fontFamily: 'Enhanced LED Board-7',
                 fontSize: 30,
                 color: BasicPalette.black.color)));
-    add(timerText);
+    add(timerText);*/
     await loadAllComponents();
   }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    // Update timer.
+    _timer.update(dt);
+
+    if (timer.value == 0) {
+      pauseEngine();
+    }
+
+    // timer.value +=1;
+  }
+
+  void resetTimer() {
+    timer.value = 0;
+  }
+
+  void resetScore() {
+    score.value = 0;
+  }
+
+  void addMenu(Menu menu) {}
 
   loadAllComponents() async {
     final boundaries = createBoundaries(this);
@@ -65,23 +94,28 @@ class BasketBallGame extends Forge2DGame
       BackboardComponent(),
       RimComponent(Vector2((gameSize.x / 2) + 6, 28), false),
       RimComponent(Vector2((gameSize.x / 2) - 6.7, 28), false),
+      RimLineComponent(),
       BackRimComponent(),
       FrontRimComponent(),
       BallComponent()
     ]);
-  }
 
-  @override
-  void update(double dt) {
-    super.update(dt);
-    // timer.value +=1;
-  }
-
-  void resetTimer() {
-    timer.value = 0;
-  }
-
-  void resetScore() {
-    timer.value = 0;
+    // Configure countdown timer.
+    _timer = Timer(
+      1,
+      repeat: true,
+      onTick: () {
+        if (timer.value == 0) {
+          // Pause the game.
+          pauseEngine();
+          // Display game over menu.
+        } else {
+          // Decrement time by one second.
+          timer.value -= 1;
+        }
+      },
+    );
   }
 }
+
+enum Menu { pause, gameOver, main }

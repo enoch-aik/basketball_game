@@ -6,7 +6,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import '../constants/image_assets.dart';
+import '../../constants/image_assets.dart';
 
 class MainMenuScreen extends StatelessWidget {
   const MainMenuScreen({Key? key}) : super(key: key);
@@ -51,7 +51,7 @@ class MainMenuScreen extends StatelessWidget {
                           height: 40,
                           child: ElevatedButton(
                               onPressed: () {
-                                Navigator.push(
+                                Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => GameWidget(
@@ -63,7 +63,12 @@ class MainMenuScreen extends StatelessWidget {
                                                         game: basketballGame),
                                                 'timer': (ctx, Game game) =>
                                                     ScoreBoard(
-                                                        game: basketballGame)
+                                                        game: basketballGame),
+                                                Menu.main.name:
+                                                    (BuildContext context,
+                                                            BasketBallGame
+                                                                gameRef) =>
+                                                        const MainMenuScreen(),
                                               },
                                               initialActiveOverlays: const [
                                                 'scoreboard'
