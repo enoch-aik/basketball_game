@@ -36,7 +36,7 @@ class ScoreBoard extends StatelessWidget {
                   valueListenable: game.score,
                   builder: (context, score, _) {
                     return Text(
-                      'PTS=> $score',
+                      'PTS-> $score',
                       style: style,
                     );
                   }),
@@ -44,7 +44,7 @@ class ScoreBoard extends StatelessWidget {
                   valueListenable: game.timer,
                   builder: (context, time, _) {
                     String newTime = time < 10 ? '0$time' : time.toString();
-                    return Text('00:$newTime <=TIME', style: style);
+                    return Text('00:$newTime <-TIME', style: style);
                   }),
             ],
           ),

@@ -47,13 +47,14 @@ class BasketBallGame extends Forge2DGame
   void resetScore() {
     score.value = 0;
   }
+
 //add overlay to game
   void addMenu(GameOverlays overlay) {
     overlays.add(overlay.name);
   }
+
 //function to load all components and initiate timer
   loadAllComponents() async {
-
     //configure timer countdown
     _timer = Timer(
       1,
@@ -62,9 +63,9 @@ class BasketBallGame extends Forge2DGame
         if (timer.value == 0) {
           // Pause the game,pause bg song and remove all balls with scoreboard components
           pauseEngine();
-          removeWhere((component) => component is BallComponent);
-          FlameAudio.bgm.pause();
-          FlameAudio.play(AudioAssets.buzzer, volume: 0.5);
+          removeWhere((component) => component is BallComponent);FlameAudio.bgm.pause().then(
+              (value) => FlameAudio.play(AudioAssets.buzzer, volume: 0.5));
+
           overlays.remove(GameOverlays.scoreboard.name);
           overlays.add(GameOverlays.gameOver.name);
           // Display game over menu.
@@ -75,7 +76,7 @@ class BasketBallGame extends Forge2DGame
       },
     );
 
-    //set boundaries for game screen
+    //Set boundaries for game screen
     final boundaries = createBoundaries(this);
     boundaries.forEach(add);
     Vector2 gameSize = screenToWorld(camera.viewport.effectiveSize);
