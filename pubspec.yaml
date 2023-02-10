@@ -41,6 +41,7 @@ dependencies:
   flame_svg: ^1.7.1
   animate_do: ^3.0.2
   flutter_animate: ^3.1.0
+  lottie: ^2.2.0
 
 dev_dependencies:
   flutter_test:
@@ -68,7 +69,7 @@ flutter:
   assets:
     - assets/images/
     - assets/audio/
-    - assets/svg/
+    - assets/animation/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
