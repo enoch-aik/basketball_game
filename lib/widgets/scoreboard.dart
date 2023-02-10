@@ -1,5 +1,4 @@
 import 'package:basketball_game/game/basketball_game.dart';
-import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
 class ScoreBoard extends StatelessWidget {
@@ -9,10 +8,9 @@ class ScoreBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size gameSize = game.size.toSize();
-    TextStyle style = TextStyle(
+    TextStyle style = const TextStyle(
       fontSize: 20,
-      color: Colors.black,
+      color: Colors.white,
       fontWeight: FontWeight.w700,
       fontFamily: 'Enhanced LED Board-7',
     );
@@ -28,16 +26,17 @@ class ScoreBoard extends StatelessWidget {
           alignment: Alignment.center,
           decoration: BoxDecoration(
               border: Border.all(color: Colors.black, width: 4),
-              color: Colors.white,
+              color: Colors.black,
               borderRadius: BorderRadius.circular(15)),
-          child: Row(crossAxisAlignment: CrossAxisAlignment.center,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ValueListenableBuilder(
                   valueListenable: game.score,
                   builder: (context, score, _) {
                     return Text(
-                      'PTS=> $score',
+                      'PTS-> $score',
                       style: style,
                     );
                   }),
@@ -45,7 +44,7 @@ class ScoreBoard extends StatelessWidget {
                   valueListenable: game.timer,
                   builder: (context, time, _) {
                     String newTime = time < 10 ? '0$time' : time.toString();
-                    return Text('00:$newTime <=TIME', style: style);
+                    return Text('00:$newTime <-TIME', style: style);
                   }),
             ],
           ),
